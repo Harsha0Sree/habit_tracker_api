@@ -1,0 +1,78 @@
+<!-- dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daemon Dashboard</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
+</head>
+<body>
+
+    <div class="background-glow"></div>
+
+    <main class="dashboard-container">
+
+        <header class="topbar">
+            <div>
+                <h1>Daemon</h1>
+                <p class="subtitle">Habit Tracking Dashboard</p>
+            </div>
+
+            <button class="add-btn">
+                + Add Habit
+            </button>
+        </header>
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <h2>Total Habits</h2>
+                <p>{{ habits|length }}</p>
+            </div>
+
+            <div class="stat-card">
+                <h2>Completed</h2>
+                <p>12</p>
+            </div>
+
+            <div class="stat-card">
+                <h2>Streak</h2>
+                <p>28 Days</p>
+            </div>
+
+        </section>
+
+        <section class="habits-section">
+
+            <div class="section-header">
+                <h2>Your Habits</h2>
+            </div>
+
+            <ul class="habit-list">
+                {% for habit in habits %}
+                    <li class="habit-card">
+
+                        <div class="habit-left">
+                            <div class="habit-icon"></div>
+
+                            <div>
+                                <h3>{{ habit.habit_name }}</h3>
+                                <p>Stay consistent today</p>
+                            </div>
+                        </div>
+
+                        <button class="complete-btn">
+                            Complete
+                        </button>
+
+                    </li>
+                {% endfor %}
+            </ul>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

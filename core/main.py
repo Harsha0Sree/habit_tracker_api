@@ -1,10 +1,16 @@
 import sqlite3
 from datetime import date
-
-from fastapi import FastAPI
+from database import SessionLocal,Base,engine
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from models import Habit
 from pydantic import BaseModel
+from sqlalchemy import select
 
 DATABASE = "data.db"
+
+Base.metadata.create_all(engine)
 
 
 class HabitCreate(BaseModel):
@@ -65,11 +71,23 @@ class DatabaseConnection:
 create_habit_table(DATABASE)
 create_logs_table(DATABASE)
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/")
 def home():
     return {"message": "the table has been created and running"}
+
+
+@app.get("/dashboard")
+def get_dashboard(request: Request):
+    with SessionLocal() as session:
+        row = select(Habit)
+        habits = session.execute(row).scalars().all()
+        return templates.TemplateResponse(
+            request=request, name="dashboard.html", context={"habits": habits}
+        )
 
 
 @app.post("/habits")
@@ -118,7 +136,7 @@ def delete_habit(name: str):
     conn.commit()
     conn.close()
     return {"message": f"the habit {name} is deleted"}
-    
+
 
 @app.post("/logs/{habit_name_to_log}")
 def log_habit(habit_name_to_log: str):
